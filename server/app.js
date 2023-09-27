@@ -4,14 +4,14 @@ const session = require('express-session');
 const app = express();
 
 const port = 3000;
-const cookieLifespan = 2; // cookies will persist for two hours
+const cookieLifeInHours = 2;
 
 const { todos, roles, sessions, users } = require('./dummyData');
 const { display } = require('./views/display');
 
 app.use(
   session({
-    cookie: { maxAge: cookieLifespan * 3600000 },
+    cookie: { maxAge: cookieLifeInHours * 3600000 },
     resave: false,
     saveUninitialized: true,
     secret: 'foo bar baz'
