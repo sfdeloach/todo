@@ -4,7 +4,7 @@ const session = require('express-session');
 const app = express();
 
 const port = 3000;
-const cookieLifeInHours = 2;
+const cookieLifeInHours = 1;
 
 const { todos, roles, sessions, users } = require('./dummyData');
 const { display } = require('./views/display');
@@ -18,7 +18,14 @@ app.use(
   })
 );
 
-app.get('/session', (req, res) => res.json(req.session));
+app.get('/session-info', (req, res) => {
+  const sessionInfo = {
+    sessionID: req.sessionID,
+    session: req.session,
+    sessionStore: req.sessionStore
+  };
+  return res.json(sessionInfo);
+});
 
 app.get('/', (req, res) => {
   if (req.session.counter !== undefined) {
