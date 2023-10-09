@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "start": "MODE='production' node app.js",
+    "dev": "MODE='development' nodemon app.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

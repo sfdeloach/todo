@@ -1,18 +1,55 @@
 # Notes
 
+## Data Model
+
+### todos table
+
+|   key   | column name |   type    |
+| :-----: | ----------- | :-------: |
+| primary | \_id        |    INT    |
+| foreign | user_id     |    INT    |
+|         | isActive    |   BOOL    |
+|         | isHidden    |   BOOL    |
+|         | text        | TEXT(256) |
+
+### sessions table
+
+|   key   | column name |   type   |
+| :-----: | ----------- | :------: |
+| primary | \_id        |   INT    |
+| foreign | user_id     |   INT    |
+|         | expires     | DATETIME |
+
+### users table
+
+|   key   | column name |    type    |
+| :-----: | ----------- | :--------: |
+| primary | \_id        |    INT     |
+| foreign | role_id     |    INT     |
+|         | isActive    |    BOOL    |
+|         | isHidden    |    BOOL    |
+|         | name_first  |  TEXT(32)  |
+|         | name_last   |  TEXT(32)  |
+|         | username    |  TEXT(64)  |
+|         | password    | TEXT(1024) |
+
+### roles table
+
+|   key   | column name |   type   |
+| :-----: | ----------- | :------: |
+| primary | \_id        |   INT    |
+|         | name        | TEXT(16) |
+|         | description | TEXT(64) |
+
 ## Authentication Workflow
 
-### First time login
+### On initial page load
 
-- client gives username and password to server
-- server checks DB to see if its valid
-- if so...
-  - server returns to the client the authorization level
-  - server saves the session info in the DB
-
-### Already logged in
-
-- client asks server to check if its sessionID exists and is valid
-- if so...
-  - server returns to the client the auth level
-  - server updates the session info in the DB
+- client asks for session info
+- if session info indicates the user is logged in
+  - the client asks for user/auth info
+  - the server updates the expiration
+- if session info indicates the user is not logged in
+  - the server removes session data from the db if applicable
+  - the client receives a false log in value
+  - the client is routed to a log in page

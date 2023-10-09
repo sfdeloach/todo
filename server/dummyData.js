@@ -14,7 +14,11 @@ module.exports.roles = [
   { _id: 2, name: 'user', description: 'only read/write to their todos' }
 ];
 
-module.exports.sessions = [{ _id: 0, user_id: 0 }];
+module.exports.sessions = [
+  { _id: 'abc123', user_id: 0, expires: '2123-01-01T23:59:59.999Z' },
+  { _id: 'xyz123', user_id: 1, expires: '2003-01-01T23:59:59.999Z' },
+  {}
+];
 
 module.exports.users = [
   {
@@ -22,25 +26,28 @@ module.exports.users = [
     role_id: 0,
     isActive: true,
     isHidden: false,
-    name: { last: 'Admin', first: 'Anthony' },
+    name_first: 'Anthony',
+    name_last: 'Admin',
     username: 'tony.admin@xyz.com',
     password: 'password'
   },
   {
-    _id: 0,
+    _id: 1,
     role_id: 1,
     isActive: true,
     isHidden: false,
-    name: { last: 'Readall', first: 'Rebecca' },
+    name_first: 'Rebecca',
+    name_last: 'Readall',
     username: 'becky@reads.edu',
     password: 'password'
   },
   {
-    _id: 0,
+    _id: 2,
     role_id: 2,
     isActive: true,
     isHidden: false,
-    name: { last: 'User', first: 'Ulysses' },
+    name_first: 'Ulysses',
+    name_last: 'User',
     username: 'uly@abc.edu',
     password: 'password'
   }

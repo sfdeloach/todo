@@ -2,19 +2,24 @@ import { useEffect, useState } from 'react';
 import './App.css';
 
 function App() {
-  const [sessionInfo, setSessionInfo] = useState({});
+  const [session, setSession] = useState({});
 
   useEffect(() => {
-    fetch('http://localhost:3000/session-info')
+    fetch('http://localhost:3000/session')
       .then(res => res.json())
       .then(data => {
-        setSessionInfo(data);
+        setSession(data);
+        // TODO: if logged on, get user info
+        // TODO: if not logged on, route to log in screen
       });
   }, []);
 
   return (
     <>
-      <pre>{JSON.stringify(sessionInfo)}</pre>
+      <h1>TODO app</h1>
+      <pre>
+        session = <strong>{JSON.stringify(session)}</strong>
+      </pre>
     </>
   );
 }
