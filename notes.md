@@ -16,7 +16,7 @@
 
 |   key   | column name |   type   |
 | :-----: | ----------- | :------: |
-| primary | \_id        |   INT    |
+| primary | \_id        | TEXT(64) |
 | foreign | user_id     |   INT    |
 |         | expires     | DATETIME |
 

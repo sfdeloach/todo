@@ -1,31 +1,35 @@
 const express = require('express');
 const session = require('express-session');
+const graphql_http = require('graphql-http');
 const cors = require('cors');
-
+const schema = require('./schema');
 const { todos, roles, sessions, users } = require('./dummyData');
 const { display } = require('./views/display');
-const port = 3000;
-const cookieLife = 12 * 3600000; // twelve hours
+
 const corsOptions = {
-  origin: 'http://127.0.0.1:5173'
+  origin: 'http://localhost:5173'
 };
+const port = 3000;
+const sessionLife = 12 * 3600000; // twelve hours
 
 const app = express();
+
+app.use('/api', graphql_http.createHandler(schema));
 
 // TODO: move this to another file
 switch (process.env.MODE) {
   case 'development':
-    const sessionIndex = 1;
+    app.use(cors(corsOptions));
+
+    const sessionIndex = 0;
     const sessionID = sessions[sessionIndex]._id;
     const expires = sessions[sessionIndex].expires;
-
-    app.use(cors(corsOptions));
 
     app.use((req, res, next) => {
       req.sessionID = sessionID;
       req.session = {
         cookie: {
-          originalMaxAge: cookieLife,
+          originalMaxAge: sessionLife,
           expires: expires,
           httpOnly: true,
           path: '/'
@@ -38,7 +42,7 @@ switch (process.env.MODE) {
     app.use(express.static('../client/dist'));
     app.use(
       session({
-        cookie: { maxAge: cookieLife },
+        cookie: { maxAge: sessionLife },
         resave: false,
         saveUninitialized: true,
         secret: 'foo bar baz'
@@ -51,17 +55,18 @@ switch (process.env.MODE) {
 
 // TODO: convert to graphQL
 app.get('/session', (req, res) => {
+  console.log('req.sessionID = ' + req.sessionID);
   const findSession = session => session._id === req.sessionID; // remove after db conversion
   let sessionIndex = sessions.findIndex(findSession); // remove after db conversion
   let session = sessions.find(findSession); // convert to db call
 
   if (session) {
     if (Date.now() < Date.parse(session.expires)) {
-      console.log(`found valid session ${req.sessionID}`);
+      console.log(`found non-expired session ${req.sessionID}`);
       session.loggedIn = true;
 
       // update expiration
-      const updatedExpiration = new Date(Date.now() + cookieLife);
+      const updatedExpiration = new Date(Date.now() + sessionLife);
       sessions[sessionIndex].expires = updatedExpiration.toISOString(); // convert to db call
     } else {
       console.log(`found expired session ${req.sessionID}`);
@@ -71,7 +76,7 @@ app.get('/session', (req, res) => {
       -1 !== sessionIndex && sessions.splice(sessionIndex, 1); // convert to db call
     }
   } else {
-    console.log(`session ${req.sessionID} does not exist`);
+    console.log(`did not find session ${req.sessionID}`);
     session = { loggedIn: false };
   }
 
