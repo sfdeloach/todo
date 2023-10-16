@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react';
+import { getSession } from '../queries/query';
 import './App.css';
 
 function App() {
   const [session, setSession] = useState({});
 
   useEffect(() => {
-    fetch('http://localhost:3000/session')
+    fetch('http://localhost:3000/api', {
+      method: 'POST',
+      mode: 'cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: getSession('CAbQ7jTx6oxUtjWSyUVshbmUBZAa5z_D') })
+    })
       .then(res => res.json())
       .then(data => {
         setSession(data);

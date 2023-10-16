@@ -59,7 +59,12 @@ const RootQuery = new GraphQLObjectType({
   fields: {
     sessions: {
       type: new GraphQLList(SessionType),
-      resolve: (parent, args) => session
+      resolve: (parent, args) => sessions
+    },
+    session: {
+      type: SessionType,
+      args: { _id: { type: GraphQLID } },
+      resolve: (parent, args) => sessions.find(session => session._id === args._id)
     }
     // book: {
     //   type: BookType,
@@ -147,7 +152,7 @@ const RootQuery = new GraphQLObjectType({
 // });
 
 module.exports = {
-  default: new GraphQLSchema({
+  schema: new GraphQLSchema({
     query: RootQuery
     // mutation: Mutation
   })

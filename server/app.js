@@ -1,20 +1,16 @@
 const express = require('express');
 const session = require('express-session');
-const graphql_http = require('graphql-http');
+const graphql_http = require('graphql-http/lib/use/express');
 const cors = require('cors');
-const schema = require('./schema');
+
+const { schema } = require('./schema');
 const { todos, roles, sessions, users } = require('./dummyData');
 const { display } = require('./views/display');
 
-const corsOptions = {
-  origin: 'http://localhost:5173'
-};
+const corsOptions = { origin: 'http://localhost:5173' };
 const port = 3000;
 const sessionLife = 12 * 3600000; // twelve hours
-
 const app = express();
-
-app.use('/api', graphql_http.createHandler(schema));
 
 // TODO: move this to another file
 switch (process.env.MODE) {
@@ -52,6 +48,9 @@ switch (process.env.MODE) {
   default:
     throw Error('must specify environment variable MODE');
 }
+
+// TODO: how to share session info with graphql?
+app.use('/api', graphql_http.createHandler({ schema }));
 
 // TODO: convert to graphQL
 app.get('/session', (req, res) => {
