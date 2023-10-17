@@ -7,50 +7,36 @@ const { schema } = require('./schema');
 const { todos, roles, sessions, users } = require('./dummyData');
 const { display } = require('./views/display');
 
-const corsOptions = { origin: 'http://localhost:5173' };
+const corsOptions = { origin: ['http://localhost:5173', 'http://127.0.0.1:5173'] };
 const port = 3000;
 const sessionLife = 12 * 3600000; // twelve hours
 const app = express();
 
-// TODO: move this to another file
+app.use(
+  session({
+    cookie: { maxAge: sessionLife },
+    resave: false,
+    saveUninitialized: true,
+    secret: 'foo bar baz'
+  })
+);
+
 switch (process.env.MODE) {
   case 'development':
     app.use(cors(corsOptions));
-
-    const sessionIndex = 0;
-    const sessionID = sessions[sessionIndex]._id;
-    const expires = sessions[sessionIndex].expires;
-
-    app.use((req, res, next) => {
-      req.sessionID = sessionID;
-      req.session = {
-        cookie: {
-          originalMaxAge: sessionLife,
-          expires: expires,
-          httpOnly: true,
-          path: '/'
-        }
-      };
-      next();
-    });
     break;
   case 'production':
     app.use(express.static('../client/dist'));
-    app.use(
-      session({
-        cookie: { maxAge: sessionLife },
-        resave: false,
-        saveUninitialized: true,
-        secret: 'foo bar baz'
-      })
-    );
     break;
   default:
     throw Error('must specify environment variable MODE');
 }
 
-// TODO: how to share session info with graphql?
 app.use('/api', graphql_http.createHandler({ schema }));
+
+app.get('/get-session', (req, res) => {
+  return res.json({ sessionID: req.sessionID });
+});
 
 // TODO: convert to graphQL
 app.get('/session', (req, res) => {

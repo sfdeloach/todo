@@ -1,4 +1,4 @@
-export const getSession = session_id => `
+export const getSessionInfo = session_id => `
 query Session {
   session(_id: "${session_id}") {
     _id

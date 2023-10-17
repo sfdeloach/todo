@@ -14,11 +14,7 @@ module.exports.roles = [
   { _id: 2, name: 'user', description: 'only read/write to their todos' }
 ];
 
-module.exports.sessions = [
-  { _id: 'CAbQ7jTx6oxUtjWSyUVshbmUBZAa5z_D', user_id: 0, expires: '2123-01-01T23:59:59.999Z' },
-  { _id: 'jEKP0iUA3rOhAs_IyNut1EbOZZDwQxgZ', user_id: 1, expires: '2003-01-01T23:59:59.999Z' },
-  {}
-];
+module.exports.sessions = [];
 
 module.exports.users = [
   {
