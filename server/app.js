@@ -82,26 +82,6 @@ app.get('/session', (req, res) => {
   return res.json(session);
 });
 
-// route only used for development
-app.get('/sessions', (req, res) => {
-  const response = process.env.MODE === 'development' ? sessions : { error: 'not allowed' };
-  res.json(response);
-});
-
-// route can only be used in production
-app.get('/counter', (req, res) => {
-  if (process.env.MODE === 'production') {
-    if (req.session.counter !== undefined) {
-      ++req.session.counter;
-    } else {
-      req.session.counter = 0;
-    }
-    return res.send(display(req.session.counter));
-  } else {
-    return res.json({ error: 'not allowed' });
-  }
-});
-
 app.listen(port, () => {
   console.log(`server started in ${process.env.MODE} mode, listening on port ${port}`);
 });
