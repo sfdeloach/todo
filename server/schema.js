@@ -41,7 +41,8 @@ const UserType = new GraphQLObjectType({
     name_first: { type: GraphQLString },
     name_last: { type: GraphQLString },
     username: { type: GraphQLString },
-    password: { type: GraphQLString }
+    password: { type: GraphQLString },
+    error: { type: GraphQLString }
   })
 });
 
@@ -65,6 +66,16 @@ const RootQuery = new GraphQLObjectType({
       type: SessionType,
       args: { _id: { type: GraphQLID } },
       resolve: (parent, args) => sessions.find(session => session._id === args._id)
+    },
+    user: {
+      type: UserType,
+      args: { username: { type: GraphQLString }, password: { type: GraphQLString } },
+      resolve: (parent, args) => {
+        const user = users.find(user => user.username === args.username);
+        if (typeof user === 'undefined') return { error: 'user not found' };
+        if (user.password !== args.password) return { error: 'passwords do not match' };
+        return user;
+      }
     }
     // book: {
     //   type: BookType,
