@@ -1,5 +1,6 @@
 // TODO: import necessary libraries to make calls to db
 const { todos, roles, sessions, users } = require('./dummyData');
+const bcrypt = require('bcryptjs');
 
 const {
   GraphQLBoolean,
@@ -72,8 +73,16 @@ const RootQuery = new GraphQLObjectType({
       args: { username: { type: GraphQLString }, password: { type: GraphQLString } },
       resolve: (parent, args) => {
         const user = users.find(user => user.username === args.username);
-        if (typeof user === 'undefined') return { error: 'user not found' };
-        if (user.password !== args.password) return { error: 'passwords do not match' };
+
+        if (typeof user === 'undefined') {
+          return { error: 'user not found' };
+        }
+
+        // TODO: how to store the hash in the db? This has "password" hard coded.
+        if (bcrypt.compareSync('password', args.password) === false) {
+          return { error: 'passwords do not match' };
+        }
+
         return user;
       }
     }

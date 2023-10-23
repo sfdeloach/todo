@@ -45,7 +45,7 @@
 
 ### On initial page load
 
-- client asks for session info
+- client gets session info
 - if session info indicates the user is logged in
   - the client asks for user/auth info
   - the server updates the expiration

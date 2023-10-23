@@ -30,7 +30,6 @@ query User {
     name_first
     name_last
     username
-    password
     role {
       _id
       name
