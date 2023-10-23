@@ -25,7 +25,7 @@ module.exports.users = [
     name_first: 'Anthony',
     name_last: 'Admin',
     username: 'tony.admin@xyz.com',
-    password: 'password'
+    hash: '$2b$10$9jJRjCb8l62p11aCSvNZL.10DhyGQ8lkLzMfGty0QkWN8gxtyWksK'
   },
   {
     _id: 1,
@@ -35,7 +35,7 @@ module.exports.users = [
     name_first: 'Rebecca',
     name_last: 'Readall',
     username: 'becky@reads.edu',
-    password: 'password'
+    hash: '$2b$10$va86wr3nYhVT1.n1zymFQ.oH5iK1tBHfv3zbXcYz6v9zgMzwYNpnS'
   },
   {
     _id: 2,
@@ -45,6 +45,6 @@ module.exports.users = [
     name_first: 'Ulysses',
     name_last: 'User',
     username: 'uly@abc.edu',
-    password: 'password'
+    hash: '$2b$10$PFrlQoQ2Kniy4stAcRzTue0Fe4DROmbJfDK28SfcAIAdcZyXutU8y'
   }
 ];

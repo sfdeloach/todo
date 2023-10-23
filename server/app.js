@@ -35,6 +35,7 @@ switch (process.env.MODE) {
 app.use('/api', graphql_http.createHandler({ schema }));
 
 app.get('/get-session', (req, res) => {
+  console.dir(req);
   return res.json({ sessionID: req.sessionID });
 });
 

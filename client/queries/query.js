@@ -10,7 +10,6 @@ query Session {
       name_first
       name_last
       username
-      password
       role {
         _id
         name
@@ -24,7 +23,6 @@ export const getUserInfo = (username, password) => `
 query User {
   user(username: "${username}", password: "${password}") {
     _id
-    role_id
     isActive
     isHidden
     name_first

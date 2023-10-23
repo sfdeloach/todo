@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { getUserInfo } from '../queries/query';
 
-import bcrypt from 'bcryptjs';
-
 function Login() {
   const blankForm = { username: '', password: '' };
 
@@ -17,7 +15,6 @@ function Login() {
       const user = await submitForm(form);
       setError(null);
       setStatus('success');
-      console.log(user);
     } catch (err) {
       setStatus('typing');
       setError(err);
@@ -66,15 +63,12 @@ function Login() {
 }
 
 function submitForm(form) {
-  const hashedPassword = bcrypt.hashSync(form.password, 8);
-  console.log(hashedPassword);
-
   return new Promise((resolve, reject) => {
     fetch('http://localhost:3000/api', {
       method: 'POST',
       mode: 'cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: getUserInfo(form.username, hashedPassword) })
+      body: JSON.stringify({ query: getUserInfo(form.username, form.password) })
     })
       .then(res => res.json())
       .then(data => {
