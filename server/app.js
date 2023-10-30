@@ -4,8 +4,9 @@ const MemoryStore = require('memorystore')(session);
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const graphql_http = require('graphql-http/lib/use/express');
+
 const { schema } = require('./schemas/schema');
-const { users, roles } = require('./schemas/dummyData');
+const { users } = require('./schemas/dummyData');
 
 const app = express();
 const corsOptions = { origin: ['http://localhost:5173', 'http://127.0.0.1:5173'] };
@@ -17,7 +18,6 @@ const sessionLife = 12 * 3600000; // twelve hours
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// session settings
 app.use(
   session({
     cookie: { maxAge: sessionLife },
@@ -30,7 +30,6 @@ app.use(
 
 switch (mode) {
   case 'dev':
-    // intended to be used with the client in dev mode
     app.use(cors(corsOptions));
     app.use((req, res, next) => {
       console.log(`(${res.statusCode}) id:${req.sessionID}`);
@@ -52,13 +51,17 @@ switch (mode) {
 app.post('/login', (req, res) => {
   // TODO - replace with db call
   const user = users.find(user => user.username === req.body.username);
+  let userInfo;
 
   if (typeof user === 'undefined' || bcrypt.compareSync(req.body.password, user.hash) === false) {
-    res.json({ loggedIn: false });
+    userInfo = { loggedIn: false };
   } else {
-    req.session.loggedIn = true;
-    res.json({ loggedIn: true });
+    userInfo = { ...user, loggedIn: true };
+    delete userInfo.hash;
   }
+
+  req.session.user = userInfo;
+  res.json({ ...req.session });
 });
 
 app.all(
@@ -67,7 +70,7 @@ app.all(
     if (req.session.loggedIn) {
       next();
     } else {
-      res.json({ loggedIn: false });
+      res.json({ error: "user is not logged in" });
     }
   },
   graphql_http.createHandler({ schema })
