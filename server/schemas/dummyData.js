@@ -5,16 +5,22 @@ module.exports.todos = [
     isActive: true,
     isHidden: false,
     text: 'Set agenda for meeting'
+  },
+  {
+    _id: 1,
+    user_id: 0,
+    isActive: true,
+    isHidden: false,
+    text: 'Debug all code'
+  },
+  {
+    _id: 2,
+    user_id: 0,
+    isActive: true,
+    isHidden: false,
+    text: 'Submit for approvals'
   }
 ];
-
-module.exports.roles = [
-  { _id: 0, name: 'admin', description: 'full read/write access to all todos' },
-  { _id: 1, name: 'readAll', description: 'read only access to all todos' },
-  { _id: 2, name: 'user', description: 'only read/write to their todos' }
-];
-
-module.exports.sessions = [];
 
 module.exports.users = [
   {
@@ -47,4 +53,10 @@ module.exports.users = [
     username: 'uly@abc.edu',
     hash: '$2b$10$PFrlQoQ2Kniy4stAcRzTue0Fe4DROmbJfDK28SfcAIAdcZyXutU8y'
   }
+];
+
+module.exports.roles = [
+  { _id: 0, name: 'admin', description: 'full read/write access to all todos' },
+  { _id: 1, name: 'readAll', description: 'read only access to all todos' },
+  { _id: 2, name: 'user', description: 'only read/write to their todos' }
 ];
