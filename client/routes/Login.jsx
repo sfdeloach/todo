@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getUserInfo } from '../queries/query';
 
 function Login() {
@@ -58,6 +59,7 @@ function Login() {
         <br />
         <button disabled={status === 'submitting'}>Submit</button>
       </form>
+      <Link to={'/'}>Go to root</Link>
     </>
   );
 }

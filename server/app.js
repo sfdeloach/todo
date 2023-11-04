@@ -49,9 +49,8 @@ switch (mode) {
 }
 
 app.post('/login', (req, res) => {
-  // TODO - replace with db call
-  const user = users.find(user => user.username === req.body.username);
   let userInfo;
+  const user = users.find(user => user.username === req.body.username); // TODO - db call
 
   if (typeof user === 'undefined' || bcrypt.compareSync(req.body.password, user.hash) === false) {
     userInfo = { loggedIn: false };
@@ -61,18 +60,18 @@ app.post('/login', (req, res) => {
   }
 
   req.session.user = userInfo;
-  res.json({ ...req.session });
+  res.json(userInfo);
 });
 
 app.all(
   '/graphql',
-  (req, res, next) => {
-    if (req.session.loggedIn) {
-      next();
-    } else {
-      res.json({ error: "user is not logged in" });
-    }
-  },
+  // (req, res, next) => {
+  //   if (req.session.user.loggedIn) {
+  //     next();
+  //   } else {
+  //     res.json({ error: 'user is not logged in' });
+  //   }
+  // },
   graphql_http.createHandler({ schema })
 );
 
