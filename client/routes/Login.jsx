@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function Login() {
+function Login({ userSetter }) {
   const blankForm = { username: '', password: '' };
 
   // status = 'typing', 'submitting', or 'success'
@@ -8,14 +8,21 @@ function Login() {
   const [error, setError] = useState(null);
   const [form, setForm] = useState(blankForm);
 
+  function resetForm(e) {
+    e.preventDefault();
+    setStatus('typing');
+    setError(null);
+    setForm(blankForm);
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setStatus('submitting');
     try {
       const user = await submitForm(form);
-      console.log(user);
-      setError(null);
       setStatus('success');
+      setError(null);
+      userSetter(user);
     } catch (err) {
       setStatus('typing');
       setError(err);
@@ -30,34 +37,54 @@ function Login() {
 
   return (
     <>
-      <h2>Login</h2>
-      {error !== null && <p>username or password does not match</p>}
-      <form onSubmit={handleSubmit}>
-        <label>
-          Username &nbsp;
+      <form
+        style={{
+          display: 'flex',
+          flexFlow: 'column nowrap',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '1rem'
+        }}>
+        <label
+          style={{
+            width: '12rem',
+            display: 'flex',
+            flexFlow: 'column nowrap'
+          }}>
+          Username
           <input
             autoComplete='true'
-            disabled={status === 'submitting'}
+            disabled={status === 'submitting' || status === 'success'}
             name='username'
             onChange={handleFormChange}
             type='text'
             value={form.username}
           />
         </label>
-        <br />
-        <label>
-          Password &nbsp;
+        <label
+          style={{
+            width: '12rem',
+            display: 'flex',
+            flexFlow: 'column nowrap'
+          }}>
+          Password
           <input
             autoComplete='true'
-            disabled={status === 'submitting'}
+            disabled={status === 'submitting' || status === 'success'}
             name='password'
             onChange={handleFormChange}
-            type='text'
+            type='password'
             value={form.password}
           />
         </label>
-        <br />
-        <button disabled={status === 'submitting'}>Submit</button>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button onClick={handleSubmit} disabled={status === 'submitting'}>
+            Submit
+          </button>
+          <button onClick={resetForm}>Reset</button>
+        </div>
+        {error !== null && <p>username or password does not match</p>}
+        {status === 'success' && <p>successful login</p>}
       </form>
     </>
   );
@@ -73,7 +100,7 @@ function submitForm(form) {
     })
       .then(res => res.json())
       .then(data => {
-        resolve(data);
+        data.loggedIn ? resolve(data) : reject(data);
       });
   });
 }

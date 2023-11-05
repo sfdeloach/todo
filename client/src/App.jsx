@@ -16,28 +16,33 @@ function App() {
       method: 'POST',
       mode: 'cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: getRoleNames() })
+      body: JSON.stringify({ query: getRoleNames() }) // getTodos?
     })
       .then(res => res.json())
       .then(data => {
-        console.log(data);
+        data.error ? setPage('login') : setPage('todo-list');
       });
   }, []);
 
-  return getPage(page);
-}
-
-function getPage(page) {
-  switch (page) {
-    case 'loading':
-      return <Loading />;
-    case 'login':
-      return <Login />;
-    case 'todo-list':
-      return <TodoList />;
-    default:
-      return <Error />;
+  function getPage(page) {
+    switch (page) {
+      case 'loading':
+        return <Loading />;
+      case 'login':
+        return <Login userSetter={userSetter} />;
+      case 'todo-list':
+        return <TodoList currentUser={user} />;
+      default:
+        return <Error />;
+    }
   }
+
+  function userSetter(user) {
+    setUser(user);
+    setPage('todo-list');
+  }
+
+  return getPage(page);
 }
 
 export default App;
