@@ -23,25 +23,23 @@
 |         | name_first  |  TEXT(32)  |
 |         | name_last   |  TEXT(32)  |
 |         | username    |  TEXT(64)  |
-|         | password    | TEXT(1024) |
+|         | hash        | TEXT(1024) |
 
 ### roles table
 
 |   key   | column name |   type   |
 | :-----: | ----------- | :------: |
 | primary | \_id        |   INT    |
+|         | authLevel   |   INT    |
 |         | name        | TEXT(16) |
 |         | description | TEXT(64) |
 
 ## Authentication Workflow
 
-- client 
-
-- client gets session info
-- if session info indicates the user is logged in
-  - the client asks for user/auth info
-  - the server updates the expiration
-- if session info indicates the user is not logged in
-  - the server removes session data from the db if applicable
-  - the client receives a false log in value
-  - the client is routed to a log in page
+- client asks for a list of roles from graphql, this is to test if a session
+  exists
+- if a session does not exist:
+  - the client goes to the login screen
+  - a successful login redirects to the user's list of todos
+- if a session exists:
+  - the user's list of todos is displayed
