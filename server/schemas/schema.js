@@ -41,7 +41,8 @@ const UserType = new GraphQLObjectType({
     todos: {
       type: new GraphQLList(TodoType),
       // TODO: convert resolve to an async call to db
-      resolve: (parent, args) => todos.filter(todo => todo.user_id === parent._id)
+      resolve: (parent, args) =>
+        todos.filter(todo => todo.user_id === parent._id)
     },
     isActive: { type: GraphQLBoolean },
     isHidden: { type: GraphQLBoolean },
@@ -56,12 +57,14 @@ const RoleType = new GraphQLObjectType({
   name: 'Role',
   fields: () => ({
     _id: { type: GraphQLID },
+    authLevel: { type: GraphQLInt },
     name: { type: GraphQLString },
     description: { type: GraphQLString },
     users: {
       type: new GraphQLList(UserType),
       // TODO: convert resolve to an async call to db
-      resolve: (parent, args) => users.filter(user => user.role_id === parent._id)
+      resolve: (parent, args) =>
+        users.filter(user => user.role_id === parent._id)
     }
   })
 });
@@ -76,7 +79,8 @@ const RootQuery = new GraphQLObjectType({
     user: {
       type: UserType,
       args: { _id: { type: GraphQLID } },
-      resolve: (parent, args) => users.find(user => user._id === parseInt(args._id))
+      resolve: (parent, args) =>
+        users.find(user => user._id === parseInt(args._id))
     },
     todos: {
       type: new GraphQLList(TodoType),
@@ -85,7 +89,8 @@ const RootQuery = new GraphQLObjectType({
     todo: {
       type: TodoType,
       args: { _id: { type: GraphQLID } },
-      resolve: (parent, args) => todos.find(todo => todo._id === parseInt(args._id))
+      resolve: (parent, args) =>
+        todos.find(todo => todo._id === parseInt(args._id))
     },
     roles: {
       type: new GraphQLList(RoleType),
@@ -94,7 +99,8 @@ const RootQuery = new GraphQLObjectType({
     role: {
       type: RoleType,
       args: { _id: { type: GraphQLID } },
-      resolve: (parent, args) => roles.find(role => role._id === parseInt(args._id))
+      resolve: (parent, args) =>
+        roles.find(role => role._id === parseInt(args._id))
     }
   }
 });

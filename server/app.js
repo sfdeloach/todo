@@ -9,7 +9,9 @@ const { schema } = require('./schemas/schema');
 const { users } = require('./schemas/dummyData');
 
 const app = express();
-const corsOptions = { origin: ['http://localhost:5173', 'http://127.0.0.1:5173'] };
+const corsOptions = {
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173']
+};
 const port = process.env.PORT || 3000;
 const mode = process.env.MODE || 'dev';
 const sessionLife = 12 * 3600000; // twelve hours
@@ -45,14 +47,18 @@ switch (mode) {
     });
     break;
   default:
-    throw Error("process.env.MODE must be either 'dev' or 'prod'");
+    throw Error("$MODE must be 'dev' or 'prod'");
 }
 
 app.post('/login', (req, res) => {
   let userInfo;
-  const user = users.find(user => user.username === req.body.username); // TODO - db call
+  // TODO - db call
+  const user = users.find(user => user.username === req.body.username);
 
-  if (typeof user === 'undefined' || bcrypt.compareSync(req.body.password, user.hash) === false) {
+  if (
+    typeof user === 'undefined' ||
+    bcrypt.compareSync(req.body.password, user.hash) === false
+  ) {
     userInfo = { loggedIn: false };
   } else {
     userInfo = { ...user, loggedIn: true };
@@ -65,13 +71,13 @@ app.post('/login', (req, res) => {
 
 app.all(
   '/graphql',
-  // (req, res, next) => {
-  //   if (req.session.user.loggedIn) {
-  //     next();
-  //   } else {
-  //     res.json({ error: 'user is not logged in' });
-  //   }
-  // },
+  (req, res, next) => {
+    if (req.session.user && req.session.user.loggedIn) {
+      next();
+    } else {
+      res.json({ error: 'user is not logged in' });
+    }
+  },
   graphql_http.createHandler({ schema })
 );
 

@@ -1,19 +1,19 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { getUserInfo } from '../queries/query';
 
 function Login() {
   const blankForm = { username: '', password: '' };
 
-  const [form, setForm] = useState(blankForm);
+  // status = 'typing', 'submitting', or 'success'
+  const [status, setStatus] = useState('typing');
   const [error, setError] = useState(null);
-  const [status, setStatus] = useState('typing'); // 'typing', 'submitting', or 'success'
+  const [form, setForm] = useState(blankForm);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setStatus('submitting');
     try {
       const user = await submitForm(form);
+      console.log(user);
       setError(null);
       setStatus('success');
     } catch (err) {
@@ -59,24 +59,21 @@ function Login() {
         <br />
         <button disabled={status === 'submitting'}>Submit</button>
       </form>
-      <Link to={'/'}>Go to root</Link>
     </>
   );
 }
 
 function submitForm(form) {
   return new Promise((resolve, reject) => {
-    fetch('http://localhost:3000/api', {
+    fetch('http://localhost:3000/login', {
       method: 'POST',
       mode: 'cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: getUserInfo(form.username, form.password) })
+      body: JSON.stringify({ username: form.username, password: form.password })
     })
       .then(res => res.json())
       .then(data => {
-        const user = data.data.user;
-        if (user.error) reject(user.error);
-        else resolve(user);
+        resolve(data);
       });
   });
 }

@@ -56,7 +56,22 @@ module.exports.users = [
 ];
 
 module.exports.roles = [
-  { _id: 0, name: 'admin', description: 'full read/write access to all todos' },
-  { _id: 1, name: 'readAll', description: 'read only access to all todos' },
-  { _id: 2, name: 'user', description: 'only read/write to their todos' }
+  {
+    _id: 0,
+    authLevel: 30,
+    name: 'admin',
+    description: 'full edit access to all todos'
+  },
+  {
+    _id: 1,
+    authLevel: 20,
+    name: 'readAll',
+    description: 'read only access to all todos'
+  },
+  {
+    _id: 2,
+    authLevel: 10,
+    name: 'user',
+    description: 'only read/write to their todos'
+  }
 ];
