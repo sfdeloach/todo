@@ -1,5 +1,5 @@
 // TODO: import necessary libraries to make calls to db
-const { todos, roles, sessions, users } = require('./dummyData');
+const { todos, roles, users } = require('./dummyData');
 
 const {
   GraphQLBoolean,
@@ -12,17 +12,19 @@ const {
   GraphQLString
 } = require('graphql');
 
-const SessionType = new GraphQLObjectType({
-  name: 'Session',
+const TodoType = new GraphQLObjectType({
+  name: 'Todo',
   fields: () => ({
     _id: { type: GraphQLID },
-    user_id: { type: GraphQLInt },
+    user_id: { type: GraphQLString },
     user: {
       type: UserType,
-      // TODO: convert resolve to an async call to db
+      // TODO: convert to an async call to db
       resolve: (parent, args) => users.find(user => user._id === parent.user_id)
     },
-    expires: { type: GraphQLString }
+    isActive: { type: GraphQLBoolean },
+    isHidden: { type: GraphQLBoolean },
+    text: { type: GraphQLString }
   })
 });
 
@@ -36,12 +38,18 @@ const UserType = new GraphQLObjectType({
       // TODO: convert resolve to an async call to db
       resolve: (parent, args) => roles.find(role => role._id === parent.role_id)
     },
+    todos: {
+      type: new GraphQLList(TodoType),
+      // TODO: convert resolve to an async call to db
+      resolve: (parent, args) =>
+        todos.filter(todo => todo.user_id === parent._id)
+    },
     isActive: { type: GraphQLBoolean },
     isHidden: { type: GraphQLBoolean },
     name_first: { type: GraphQLString },
     name_last: { type: GraphQLString },
     username: { type: GraphQLString },
-    password: { type: GraphQLString }
+    hash: { type: GraphQLString }
   })
 });
 
@@ -49,57 +57,51 @@ const RoleType = new GraphQLObjectType({
   name: 'Role',
   fields: () => ({
     _id: { type: GraphQLID },
+    authLevel: { type: GraphQLInt },
     name: { type: GraphQLString },
-    description: { type: GraphQLString }
+    description: { type: GraphQLString },
+    users: {
+      type: new GraphQLList(UserType),
+      // TODO: convert resolve to an async call to db
+      resolve: (parent, args) =>
+        users.filter(user => user.role_id === parent._id)
+    }
   })
 });
 
 const RootQuery = new GraphQLObjectType({
   name: 'RootQuery',
   fields: {
-    sessions: {
-      type: new GraphQLList(SessionType),
-      resolve: (parent, args) => sessions
+    users: {
+      type: new GraphQLList(UserType),
+      resolve: (parent, args) => users
     },
-    session: {
-      type: SessionType,
+    user: {
+      type: UserType,
       args: { _id: { type: GraphQLID } },
-      resolve: (parent, args) => sessions.find(session => session._id === args._id)
+      resolve: (parent, args) =>
+        users.find(user => user._id === parseInt(args._id))
+    },
+    todos: {
+      type: new GraphQLList(TodoType),
+      resolve: (parent, args) => todos
+    },
+    todo: {
+      type: TodoType,
+      args: { _id: { type: GraphQLID } },
+      resolve: (parent, args) =>
+        todos.find(todo => todo._id === parseInt(args._id))
+    },
+    roles: {
+      type: new GraphQLList(RoleType),
+      resolve: (parent, args) => roles
+    },
+    role: {
+      type: RoleType,
+      args: { _id: { type: GraphQLID } },
+      resolve: (parent, args) =>
+        roles.find(role => role._id === parseInt(args._id))
     }
-    // book: {
-    //   type: BookType,
-    //   args: { _id: { type: GraphQLID } },
-    //   resolve: async (parent, args) => {
-    //     let result = await db.collection('books').findOne({ _id: new ObjectId(args._id) });
-    //     console.log(`[${new Date().toLocaleTimeString()}] query book`);
-    //     return result;
-    //   }
-    // },
-    // author: {
-    //   type: AuthorType,
-    //   args: { _id: { type: GraphQLID } },
-    //   resolve: async (parent, args) => {
-    //     let result = await db.collection('authors').findOne({ _id: new ObjectId(args._id) });
-    //     console.log(`[${new Date().toLocaleTimeString()}] query author`);
-    //     return result;
-    //   }
-    // },
-    // books: {
-    //   type: new GraphQLList(BookType),
-    //   resolve: async (parent, args) => {
-    //     let result = await db.collection('books').find({}).toArray();
-    //     console.log(`[${new Date().toLocaleTimeString()}] query all books`);
-    //     return result;
-    //   }
-    // },
-    // authors: {
-    //   type: new GraphQLList(AuthorType),
-    //   resolve: async (parent, args) => {
-    //     let result = await db.collection('authors').find({}).toArray();
-    //     console.log(`[${new Date().toLocaleTimeString()}] query all authors`);
-    //     return result;
-    //   }
-    // }
   }
 });
 

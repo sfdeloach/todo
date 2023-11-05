@@ -12,14 +12,6 @@
 |         | isHidden    |   BOOL    |
 |         | text        | TEXT(256) |
 
-### sessions table
-
-|   key   | column name |   type   |
-| :-----: | ----------- | :------: |
-| primary | \_id        | TEXT(64) |
-| foreign | user_id     |   INT    |
-|         | expires     | DATETIME |
-
 ### users table
 
 |   key   | column name |    type    |
@@ -43,9 +35,9 @@
 
 ## Authentication Workflow
 
-### On initial page load
+- client 
 
-- client asks for session info
+- client gets session info
 - if session info indicates the user is logged in
   - the client asks for user/auth info
   - the server updates the expiration

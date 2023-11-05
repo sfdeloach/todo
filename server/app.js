@@ -1,107 +1,86 @@
 const express = require('express');
 const session = require('express-session');
-const graphql_http = require('graphql-http/lib/use/express');
+const MemoryStore = require('memorystore')(session);
+const bcrypt = require('bcrypt');
 const cors = require('cors');
+const graphql_http = require('graphql-http/lib/use/express');
 
-const { schema } = require('./schema');
-const { todos, roles, sessions, users } = require('./dummyData');
-const { display } = require('./views/display');
+const { schema } = require('./schemas/schema');
+const { users } = require('./schemas/dummyData');
 
-const corsOptions = { origin: 'http://localhost:5173' };
-const port = 3000;
-const sessionLife = 12 * 3600000; // twelve hours
 const app = express();
+const corsOptions = {
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173']
+};
+const port = process.env.PORT || 3000;
+const mode = process.env.MODE || 'dev';
+const sessionLife = 12 * 3600000; // twelve hours
 
-// TODO: move this to another file
-switch (process.env.MODE) {
-  case 'development':
+// enable reading of req.body
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  session({
+    cookie: { maxAge: sessionLife },
+    store: new MemoryStore({ checkPeriod: 2 * sessionLife }),
+    resave: false,
+    saveUninitialized: true,
+    secret: process.env.SESSION_SECRET || 'foo bar baz'
+  })
+);
+
+switch (mode) {
+  case 'dev':
     app.use(cors(corsOptions));
-
-    const sessionIndex = 0;
-    const sessionID = sessions[sessionIndex]._id;
-    const expires = sessions[sessionIndex].expires;
-
     app.use((req, res, next) => {
-      req.sessionID = sessionID;
-      req.session = {
-        cookie: {
-          originalMaxAge: sessionLife,
-          expires: expires,
-          httpOnly: true,
-          path: '/'
-        }
-      };
+      console.log(`(${res.statusCode}) id:${req.sessionID}`);
       next();
     });
     break;
-  case 'production':
+  case 'prod':
     app.use(express.static('../client/dist'));
-    app.use(
-      session({
-        cookie: { maxAge: sessionLife },
-        resave: false,
-        saveUninitialized: true,
-        secret: 'foo bar baz'
-      })
-    );
+    app.use((req, res, next) => {
+      const timestamp = new Date();
+      console.log(`[${timestamp.toLocaleString()}] ${req.ip}`);
+      next();
+    });
     break;
   default:
-    throw Error('must specify environment variable MODE');
+    throw Error("$MODE must be 'dev' or 'prod'");
 }
 
-// TODO: how to share session info with graphql?
-app.use('/api', graphql_http.createHandler({ schema }));
+app.post('/login', (req, res) => {
+  let userInfo;
+  // TODO - db call
+  const user = users.find(user => user.username === req.body.username);
 
-// TODO: convert to graphQL
-app.get('/session', (req, res) => {
-  console.log('req.sessionID = ' + req.sessionID);
-  const findSession = session => session._id === req.sessionID; // remove after db conversion
-  let sessionIndex = sessions.findIndex(findSession); // remove after db conversion
-  let session = sessions.find(findSession); // convert to db call
-
-  if (session) {
-    if (Date.now() < Date.parse(session.expires)) {
-      console.log(`found non-expired session ${req.sessionID}`);
-      session.loggedIn = true;
-
-      // update expiration
-      const updatedExpiration = new Date(Date.now() + sessionLife);
-      sessions[sessionIndex].expires = updatedExpiration.toISOString(); // convert to db call
-    } else {
-      console.log(`found expired session ${req.sessionID}`);
-      session.loggedIn = false;
-
-      // remove the expired record from db
-      -1 !== sessionIndex && sessions.splice(sessionIndex, 1); // convert to db call
-    }
+  if (
+    typeof user === 'undefined' ||
+    bcrypt.compareSync(req.body.password, user.hash) === false
+  ) {
+    userInfo = { loggedIn: false };
   } else {
-    console.log(`did not find session ${req.sessionID}`);
-    session = { loggedIn: false };
+    userInfo = { ...user, loggedIn: true };
+    delete userInfo.hash;
   }
 
-  return res.json(session);
+  req.session.user = userInfo;
+  res.json(userInfo);
 });
 
-// route only used for development
-app.get('/sessions', (req, res) => {
-  const response = process.env.MODE === 'development' ? sessions : { error: 'not allowed' };
-  res.json(response);
-});
-
-// route can only be used in production
-app.get('/counter', (req, res) => {
-  if (process.env.MODE === 'production') {
-    if (req.session.counter !== undefined) {
-      ++req.session.counter;
+app.all(
+  '/graphql',
+  (req, res, next) => {
+    if (req.session.user && req.session.user.loggedIn) {
+      next();
     } else {
-      req.session.counter = 0;
+      res.json({ error: 'user is not logged in' });
     }
-    return res.send(display(req.session.counter));
-  } else {
-    return res.json({ error: 'not allowed' });
-  }
-});
+  },
+  graphql_http.createHandler({ schema })
+);
 
 app.listen(port, () => {
-  console.log(`server started in ${process.env.MODE} mode, listening on port ${port}`);
+  console.log(`server started in ${mode} mode, listening on port ${port}`);
 });
