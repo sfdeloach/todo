@@ -1,4 +1,4 @@
-function TodoList() {
+function TodoList({ currentUser }) {
   return (
     <>
       <h1>TODO App</h1>

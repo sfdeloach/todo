@@ -50,6 +50,10 @@ switch (mode) {
     throw Error("$MODE must be 'dev' or 'prod'");
 }
 
+app.get('/session', (req, res) => {
+  res.json(req.session);
+});
+
 app.post('/login', (req, res) => {
   let userInfo;
   // TODO - db call
@@ -69,13 +73,21 @@ app.post('/login', (req, res) => {
   res.json(userInfo);
 });
 
+app.get('/logout', (req, res) => {
+  if (req.session.user && req.session.user.loggedIn) {
+    req.session.user.loggedIn = false;
+  }
+
+  res.json(req.session.user);
+});
+
 app.all(
   '/graphql',
   (req, res, next) => {
     if (req.session.user && req.session.user.loggedIn) {
       next();
     } else {
-      res.json({ error: 'user is not logged in' });
+      res.json({ error: 'session has no user data' });
     }
   },
   graphql_http.createHandler({ schema })

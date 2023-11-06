@@ -4,32 +4,49 @@ import Error from '../routes/Error';
 import Loading from '../routes/Loading';
 import Login from '../routes/Login';
 import TodoList from '../routes/TodoList';
-
-import { getRoleNames } from '../queries/query';
+import TopNav from './TopNav';
 
 function App() {
   const [user, setUser] = useState({ loggedIn: false });
   const [page, setPage] = useState('loading');
 
   useEffect(() => {
-    fetch('http://localhost:3000/graphql', {
-      method: 'POST',
-      mode: 'cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: getRoleNames() }) // getTodos?
-    })
+    fetch('http://localhost:3000/session')
       .then(res => res.json())
-      .then(data => {
-        data.error ? setPage('login') : setPage('todo-list');
+      .then(session => {
+        if (!session.user || !session.user.loggedIn) {
+          setPage('login');
+        } else {
+          setUser(session.user);
+          setPage('todo-list');
+        }
       });
   }, []);
 
-  function getPage(page) {
+  function initUser(user) {
+    setUser(user);
+    setPage('todo-list');
+  }
+
+  function logout() {
+    fetch('http://localhost:3000/logout')
+      .then(res => res.json())
+      .then(data => {
+        if (data.loggedIn === false) {
+          setUser(data);
+          setPage('login');
+        } else {
+          console.error('unable to logout of server');
+        }
+      });
+  }
+
+  function renderPage(page) {
     switch (page) {
       case 'loading':
         return <Loading />;
       case 'login':
-        return <Login userSetter={userSetter} />;
+        return <Login initUser={initUser} />;
       case 'todo-list':
         return <TodoList currentUser={user} />;
       default:
@@ -37,12 +54,12 @@ function App() {
     }
   }
 
-  function userSetter(user) {
-    setUser(user);
-    setPage('todo-list');
-  }
-
-  return getPage(page);
+  return (
+    <>
+      <TopNav currentUser={user} logout={logout} />
+      {renderPage(page)}
+    </>
+  );
 }
 
 export default App;

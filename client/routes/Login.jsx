@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function Login({ userSetter }) {
+function Login({ initUser }) {
   const blankForm = { username: '', password: '' };
 
   // status = 'typing', 'submitting', or 'success'
@@ -22,7 +22,7 @@ function Login({ userSetter }) {
       const user = await submitForm(form);
       setStatus('success');
       setError(null);
-      userSetter(user);
+      initUser(user);
     } catch (err) {
       setStatus('typing');
       setError(err);
