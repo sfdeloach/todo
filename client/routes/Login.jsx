@@ -36,7 +36,7 @@ function Login({ initUser }) {
   }
 
   return (
-    <>
+    <div>
       <form
         style={{
           display: 'flex',
@@ -86,7 +86,7 @@ function Login({ initUser }) {
         {error !== null && <p>username or password does not match</p>}
         {status === 'success' && <p>successful login</p>}
       </form>
-    </>
+    </div>
   );
 }
 

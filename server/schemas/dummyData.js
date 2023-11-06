@@ -19,6 +19,27 @@ module.exports.todos = [
     isActive: true,
     isHidden: false,
     text: 'Submit for approvals'
+  },
+  {
+    _id: 3,
+    user_id: 1,
+    isActive: true,
+    isHidden: false,
+    text: 'Call about tests'
+  },
+  {
+    _id: 4,
+    user_id: 1,
+    isActive: true,
+    isHidden: false,
+    text: 'Gain historical perspective'
+  },
+  {
+    _id: 5,
+    user_id: 1,
+    isActive: true,
+    isHidden: false,
+    text: 'Go fight fire with info'
   }
 ];
 
