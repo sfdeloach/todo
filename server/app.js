@@ -15,6 +15,7 @@ const corsOptions = {
 const port = process.env.PORT || 3000;
 const mode = process.env.MODE || 'prod';
 const sessionLife = 12 * 3600000; // twelve hours
+const devSession = { user: { loggedIn: false } };
 
 // enable reading of req.body
 app.use(express.json());
@@ -29,12 +30,6 @@ app.use((req, res, next) => {
 switch (mode) {
   case 'dev':
     app.use(cors(corsOptions));
-
-    // mock session used for development
-    app.use((req, res, next) => {
-      if (!req.session) req.session = { user: { loggedIn: false } };
-      next();
-    });
     break;
   case 'prod':
     app.use(express.static('../client/dist'));
@@ -55,7 +50,7 @@ switch (mode) {
 }
 
 app.get('/session', (req, res) => {
-  res.json(req.session);
+  mode === 'dev' ? res.json(devSession) : res.json(req.session);
 });
 
 app.post('/login', (req, res) => {
@@ -70,24 +65,25 @@ app.post('/login', (req, res) => {
     delete userInfo.hash;
   }
 
-  req.session.user = userInfo;
+  mode === 'dev' ? (devSession.user = userInfo) : (req.session.user = userInfo);
   res.json(userInfo);
 });
 
 app.get('/logout', (req, res) => {
-  req.session.user.loggedIn = false;
+  mode === 'dev' ? (devSession.user.loggedIn = false) : (req.session.user.loggedIn = false);
   res.json({ loggedIn: false });
 });
 
 app.all(
   '/graphql',
-  // (req, res, next) => {
-  //   if (req.session.user && req.session.user.loggedIn) {
-  //     next();
-  //   } else {
-  //     res.json({ error: 'session has no user data' });
-  //   }
-  // },
+  (req, res, next) => {
+    const currentSession = mode === 'dev' ? devSession : req.session;
+    if (currentSession.user && currentSession.user.loggedIn) {
+      next();
+    } else {
+      res.json({ error: 'session has no user data' });
+    }
+  },
   graphql_http.createHandler({ schema })
 );
 

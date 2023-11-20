@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getTodos } from '../queries/query';
+import './TodoList.css';
 
 function TodoList({ currentUser }) {
   const [todos, setTodos] = useState([]);
@@ -21,51 +22,27 @@ function TodoList({ currentUser }) {
       });
   }, []);
 
-  const listTodos = todos.map(todo => (
-    <li
+  const listTodos = todos.map((todo, index) => (
+    <tr
       key={todo._id}
-      style={{
-        display: 'flex',
-        justifyContent: 'flex-end',
-        alignItems: 'flex-start'
+      onClick={() => {
+        const todosCopy = [...todos];
+        todosCopy[index].isActive = !todosCopy[index].isActive;
+        setTodos(todosCopy);
       }}
-      onMouseEnter={e => {
-        e.target.style.backgroundColor = '#eee';
-        e.target.style.cursor = 'pointer';
-      }}
-      onMouseLeave={e => (e.target.style.backgroundColor = '#fff')}
     >
-      <span>{todo.text}</span>
-      <span>🗑️</span>
-    </li>
+      <td className='icon'>{todo.isActive ? '[ ]' : '[x]'}</td>
+      <td>{todo.text}</td>
+      <td className='icon'>🗑️</td>
+    </tr>
   ));
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexFlow: 'column nowrap',
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: '1rem'
-      }}
-    >
-      <ul
-        style={{
-          display: 'flex',
-          flexFlow: 'column nowrap',
-          justifyContent: 'center',
-          alignItems: 'flex-start',
-          gap: '1rem',
-          width: '50vw',
-          listStyleType: 'none',
-          margin: '0',
-          padding: '0',
-          outline: '1px solid black'
-        }}
-      >
-        {listTodos}
-      </ul>
+    <div className='todoList'>
+      <h1>{currentUser.name_first}'s todo list:</h1>
+      <table>
+        <tbody>{listTodos}</tbody>
+      </table>
     </div>
   );
 }
