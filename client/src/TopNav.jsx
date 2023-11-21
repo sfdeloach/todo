@@ -10,8 +10,11 @@ function TopNav({ currentUser, logout }) {
         marginBottom: '2rem',
         backgroundColor: '#eee',
         height: '3rem'
-      }}>
-      <div style={{ fontSize: '2rem' }}>✏️my todo</div>
+      }}
+    >
+      <div style={{ fontSize: '2rem' }}>
+        <span className='material-symbols-outlined'>checklist</span> my todo
+      </div>
       <div
         style={{ display: currentUser.loggedIn ? 'block' : 'none' }}
         onClick={logout}
@@ -19,7 +22,8 @@ function TopNav({ currentUser, logout }) {
           e.target.style.color = '#888';
           e.target.style.cursor = 'pointer';
         }}
-        onMouseLeave={e => (e.target.style.color = '#000')}>
+        onMouseLeave={e => (e.target.style.color = '#000')}
+      >
         Logout
       </div>
     </div>

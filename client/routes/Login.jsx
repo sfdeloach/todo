@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import './Login.css';
 
 function Login({ initUser }) {
   const blankForm = { username: '', password: '' };
@@ -44,13 +45,15 @@ function Login({ initUser }) {
           justifyContent: 'center',
           alignItems: 'center',
           gap: '1rem'
-        }}>
+        }}
+      >
         <label
           style={{
-            width: '12rem',
+            width: '18rem',
             display: 'flex',
             flexFlow: 'column nowrap'
-          }}>
+          }}
+        >
           Username
           <input
             autoComplete='true'
@@ -63,10 +66,11 @@ function Login({ initUser }) {
         </label>
         <label
           style={{
-            width: '12rem',
+            width: '18rem',
             display: 'flex',
             flexFlow: 'column nowrap'
-          }}>
+          }}
+        >
           Password
           <input
             autoComplete='true'

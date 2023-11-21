@@ -22,18 +22,52 @@ function TodoList({ currentUser }) {
       });
   }, []);
 
+  function handleDrag(e, index) {
+    e.dataTransfer.setData('index', index);
+  }
+
+  function handleOnDrop(e) {
+    const from = e.dataTransfer.getData('index');
+    const to = e.target.parentNode.id;
+    const copy = [...todos];
+
+    const temp = copy[to];
+    copy[to] = copy[from];
+    copy[from] = temp;
+    
+    setTodos(copy);
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault();
+  }
+
+  function checkTodo(index) {
+    const copy = [...todos];
+    copy[index].isActive = !copy[index].isActive;
+    setTodos(copy);
+  }
+
   const listTodos = todos.map((todo, index) => (
-    <tr
-      key={todo._id}
-      onClick={() => {
-        const todosCopy = [...todos];
-        todosCopy[index].isActive = !todosCopy[index].isActive;
-        setTodos(todosCopy);
-      }}
-    >
-      <td className='icon'>{todo.isActive ? '[ ]' : '[x]'}</td>
-      <td>{todo.text}</td>
-      <td className='icon'>🗑️</td>
+    <tr key={todo._id} id={index}>
+      <td className='icon' onClick={() => checkTodo(index)}>
+        <span className='material-symbols-outlined'>
+          {todo.isActive ? 'check_box_outline_blank' : 'check_box'}{' '}
+        </span>
+      </td>
+      <td
+        draggable
+        onDragStart={e => handleDrag(e, index)}
+        style={todo.isActive ? {} : { color: '#aaa', textDecoration: 'line-through' }}
+      >
+        {todo.text}
+      </td>
+      <td className='icon'>
+        <span className='material-symbols-outlined'>edit</span>
+      </td>
+      <td className='icon'>
+        <span className='material-symbols-outlined'>delete</span>
+      </td>
     </tr>
   ));
 
@@ -41,7 +75,9 @@ function TodoList({ currentUser }) {
     <div className='todoList'>
       <h1>{currentUser.name_first}'s todo list:</h1>
       <table>
-        <tbody>{listTodos}</tbody>
+        <tbody onDrop={e => handleOnDrop(e)} onDragOver={e => handleDragOver(e)}>
+          {listTodos}
+        </tbody>
       </table>
     </div>
   );
