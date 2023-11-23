@@ -1,4 +1,5 @@
 // TODO: import necessary libraries to make calls to db
+const crypto = require('crypto');
 const { todos, roles, users } = require('./dummyData');
 
 const {
@@ -22,6 +23,7 @@ const TodoType = new GraphQLObjectType({
       // TODO: convert to an async call to db
       resolve: (parent, args) => users.find(user => user._id === parent.user_id)
     },
+    order: { type: GraphQLInt },
     isActive: { type: GraphQLBoolean },
     isHidden: { type: GraphQLBoolean },
     text: { type: GraphQLString }
@@ -105,6 +107,33 @@ const RootQuery = new GraphQLObjectType({
   }
 });
 
+const Mutation = new GraphQLObjectType({
+  name: 'Mutation',
+  fields: {
+    addTodo: {
+      type: TodoType,
+      args: {
+        user_id: { type: GraphQLString },
+        text: { type: GraphQLString }
+      },
+      // TODO: convert to an async call to db
+      resolve: (parent, args) => {
+        const newTodo = {
+          _id: crypto.randomUUID(),
+          user_id: args.user_id,
+          order: 0,
+          isActive: true,
+          isHidden: false,
+          text: args.text
+        };
+
+        todos.push(newTodo);
+        return newTodo;
+      }
+    }
+  }
+});
+
 // const Mutation = new GraphQLObjectType({
 //   name: 'Mutation',
 //   fields: {
@@ -155,7 +184,7 @@ const RootQuery = new GraphQLObjectType({
 
 module.exports = {
   schema: new GraphQLSchema({
-    query: RootQuery
-    // mutation: Mutation
+    query: RootQuery,
+    mutation: Mutation
   })
 };

@@ -1,42 +1,48 @@
 module.exports.todos = [
   {
-    _id: 0,
+    _id: 'f83a39ad-7fa1-4f96-886b-a1eb20f29f6a',
     user_id: 0,
+    order: 0,
     isActive: true,
     isHidden: false,
     text: 'Set agenda for meeting'
   },
   {
-    _id: 1,
+    _id: 'f83a39ad-7fa1-4f96-886b-a1eb20f29f6b',
     user_id: 0,
+    order: 1,
     isActive: true,
     isHidden: false,
     text: 'Debug all code'
   },
   {
-    _id: 2,
+    _id: 'f83a39ad-7fa1-4f96-886b-a1eb20f29f6c',
     user_id: 0,
+    order: 2,
     isActive: true,
     isHidden: false,
     text: 'Submit for approvals'
   },
   {
-    _id: 3,
+    _id: 'f83a39ad-7fa1-4f96-886b-a1eb20f29f6d',
     user_id: 1,
+    order: 0,
     isActive: true,
     isHidden: false,
     text: 'Call about tests'
   },
   {
-    _id: 4,
+    _id: 'f83a39ad-7fa1-4f96-886b-a1eb20f29f6e',
     user_id: 1,
+    order: 1,
     isActive: true,
     isHidden: false,
     text: 'Gain historical perspective'
   },
   {
-    _id: 5,
+    _id: 'f83a39ad-7fa1-4f96-886b-a1eb20f29f6f',
     user_id: 1,
+    order: 2,
     isActive: true,
     isHidden: false,
     text: 'Go fight fire with info'

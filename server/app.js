@@ -13,7 +13,7 @@ const corsOptions = {
   origin: ['http://localhost:5173', 'http://127.0.0.1:5173']
 };
 const port = process.env.PORT || 3000;
-const mode = process.env.MODE || 'prod';
+const mode = process.env.MODE || 'dev';
 const sessionLife = 12 * 3600000; // twelve hours
 const devSession = { user: { loggedIn: false } };
 
@@ -58,7 +58,10 @@ app.post('/login', (req, res) => {
   // TODO - db call
   const user = users.find(user => user.username === req.body.username);
 
-  if (typeof user === 'undefined' || bcrypt.compareSync(req.body.password, user.hash) === false) {
+  if (
+    typeof user === 'undefined' ||
+    bcrypt.compareSync(req.body.password, user.hash) === false
+  ) {
     userInfo = { loggedIn: false };
   } else {
     userInfo = { ...user, loggedIn: true };
@@ -70,7 +73,9 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-  mode === 'dev' ? (devSession.user.loggedIn = false) : (req.session.user.loggedIn = false);
+  mode === 'dev'
+    ? (devSession.user.loggedIn = false)
+    : (req.session.user.loggedIn = false);
   res.json({ loggedIn: false });
 });
 
@@ -78,7 +83,10 @@ app.all(
   '/graphql',
   (req, res, next) => {
     const currentSession = mode === 'dev' ? devSession : req.session;
-    if (currentSession.user && currentSession.user.loggedIn) {
+    if (
+      mode === 'dev' ||
+      (currentSession.user && currentSession.user.loggedIn)
+    ) {
       next();
     } else {
       res.json({ error: 'session has no user data' });

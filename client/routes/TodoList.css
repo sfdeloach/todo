@@ -6,6 +6,7 @@
 
 .todoList table {
   border-spacing: 0px;
+  margin-top: 1.5rem;
 }
 
 .todoList td {
