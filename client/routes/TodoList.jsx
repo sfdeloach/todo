@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { getTodos, addTodo } from '../queries/query';
+import { getAllTodos, addTodo } from '../queries/query';
 import './TodoList.css';
 
 function TodoList({ currentUser }) {
@@ -17,15 +17,16 @@ function TodoList({ currentUser }) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        query: getTodos(currentUser._id)
+        query: getAllTodos()
       })
     })
       .then(res => res.json())
       .then(result => {
-        setTodos(result.data.user.todos);
+        setTodos(result.data.todos);
       });
   }, []);
 
+  // places focus on input after form submission
   useEffect(() => {
     if (status === 'typing') {
       inputRef.current.focus();
@@ -56,15 +57,9 @@ function TodoList({ currentUser }) {
     })
       .then(res => res.json())
       .then(result => {
-        // the new todo goes on top
-        const nextTodos = todos.map(todo => {
-          todo.order = todo.order + 1;
-          return todo;
-        });
-
-        setStatus('typing');
-        setTodos([...nextTodos, result.data.addTodo]);
         setForm('');
+        setStatus('typing');
+        setTodos(result.data.addTodo);
       });
   }
 
@@ -116,6 +111,7 @@ function TodoList({ currentUser }) {
 
   const listTodos = todos
     .toSorted((a, b) => a.order - b.order)
+    .filter(todo => parseInt(todo.user_id) === currentUser._id)
     .filter(todo => todo.isHidden === false)
     .map(todo => (
       <tr key={todo._id}>

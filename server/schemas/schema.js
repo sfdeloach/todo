@@ -1,6 +1,6 @@
 // TODO: import necessary libraries to make calls to db
 const crypto = require('crypto');
-const { todos, roles, users } = require('./dummyData');
+let { todos, roles, users } = require('./dummyData');
 
 const {
   GraphQLBoolean,
@@ -111,24 +111,34 @@ const Mutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
     addTodo: {
-      type: TodoType,
+      type: new GraphQLList(TodoType),
       args: {
         user_id: { type: GraphQLString },
         text: { type: GraphQLString }
       },
       // TODO: convert to an async call to db
       resolve: (parent, args) => {
+        // create new todo
         const newTodo = {
           _id: crypto.randomUUID(),
-          user_id: args.user_id,
+          user_id: parseInt(args.user_id),
           order: 0,
           isActive: true,
           isHidden: false,
           text: args.text
         };
 
-        todos.push(newTodo);
-        return newTodo;
+        // reorder user's todos, add new one
+        const updatedTodos = todos.map(todo => {
+          if (todo.user_id === parseInt(args.user_id)) {
+            todo.order = todo.order + 1;
+          }
+          return todo;
+        });
+
+        todos = [...updatedTodos, newTodo];
+
+        return todos;
       }
     }
   }
