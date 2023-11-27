@@ -2,7 +2,7 @@ module.exports.todos = [
   {
     _id: 'f83a39ad-7fa1-4f96-886b-a1eb20f29f6a',
     user_id: 0,
-    order: 0,
+    position: 2,
     isActive: true,
     isHidden: false,
     text: 'Set agenda for meeting'
@@ -10,7 +10,7 @@ module.exports.todos = [
   {
     _id: 'f83a39ad-7fa1-4f96-886b-a1eb20f29f6b',
     user_id: 0,
-    order: 1,
+    position: 1,
     isActive: true,
     isHidden: false,
     text: 'Debug all code'
@@ -18,7 +18,7 @@ module.exports.todos = [
   {
     _id: 'f83a39ad-7fa1-4f96-886b-a1eb20f29f6c',
     user_id: 0,
-    order: 2,
+    position: 0,
     isActive: true,
     isHidden: false,
     text: 'Submit for approvals'
@@ -26,7 +26,7 @@ module.exports.todos = [
   {
     _id: 'f83a39ad-7fa1-4f96-886b-a1eb20f29f6d',
     user_id: 1,
-    order: 0,
+    position: 2,
     isActive: true,
     isHidden: false,
     text: 'Call about tests'
@@ -34,7 +34,7 @@ module.exports.todos = [
   {
     _id: 'f83a39ad-7fa1-4f96-886b-a1eb20f29f6e',
     user_id: 1,
-    order: 1,
+    position: 1,
     isActive: true,
     isHidden: false,
     text: 'Gain historical perspective'
@@ -42,7 +42,7 @@ module.exports.todos = [
   {
     _id: 'f83a39ad-7fa1-4f96-886b-a1eb20f29f6f',
     user_id: 1,
-    order: 2,
+    position: 0,
     isActive: true,
     isHidden: false,
     text: 'Go fight fire with info'

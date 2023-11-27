@@ -4,7 +4,7 @@ query User {
   user(_id: ${user_id}) {
     todos {
       _id
-      order
+      position
       isActive
       isHidden
       text
@@ -17,7 +17,7 @@ query Todos {
   todos {
       _id
       user_id
-      order
+      position
       isActive
       isHidden
       text
@@ -29,7 +29,19 @@ mutation AddTodo ($user_id: String!, $text: String!) {
   addTodo(user_id: $user_id, text: $text) {
       _id
       user_id
-      order
+      position
+      isActive
+      isHidden
+      text
+  }
+}`;
+
+export const updateTodo = () => `
+mutation UpdateTodo ($_id: String!, $action: String!, $text: String!) {
+  updateTodo(_id: $_id, action: $action, text: $text) {
+      _id
+      user_id
+      position
       isActive
       isHidden
       text

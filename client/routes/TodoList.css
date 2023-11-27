@@ -9,10 +9,6 @@
   margin-top: 1.5rem;
 }
 
-.todoList td {
-  border-top: 1px solid #ddd;
-}
-
 .todoList td.icon {
   padding: 1rem 1rem;
   cursor: pointer;

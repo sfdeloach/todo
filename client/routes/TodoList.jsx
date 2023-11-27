@@ -1,13 +1,22 @@
+/**
+ *  resource credits:
+ *
+ *  references used to focus on a todo when editing -
+ *  https://mattclaffey.medium.com/adding-react-refs-to-an-array-of-items-96e9a12ab40c
+ */
+
 import { useEffect, useRef, useState } from 'react';
-import { getAllTodos, addTodo } from '../queries/query';
+import { getAllTodos, addTodo, updateTodo } from '../queries/query';
 import './TodoList.css';
 
 function TodoList({ currentUser }) {
   const inputRef = useRef();
+  const editRefs = useRef(new Set());
 
   const [todos, setTodos] = useState([]);
   const [status, setStatus] = useState('typing');
   const [form, setForm] = useState('');
+  const [edit, setEdit] = useState({ _id: '', text: '' });
 
   useEffect(() => {
     fetch('http://localhost:3000/graphql', {
@@ -33,8 +42,21 @@ function TodoList({ currentUser }) {
     }
   }, [status]);
 
+  // places focus on the todo when editing
+  useEffect(() => {
+    if (edit._id !== '') {
+      for (const item of editRefs.current) {
+        item.focus();
+      }
+    }
+  }, [edit]);
+
   function handleFormChange(e) {
     setForm(e.target.value);
+  }
+
+  function handleEditChange(e) {
+    setEdit({ ...edit, text: e.target.value });
   }
 
   function handleSubmit(e) {
@@ -57,25 +79,32 @@ function TodoList({ currentUser }) {
     })
       .then(res => res.json())
       .then(result => {
+        setTodos(result.data.addTodo);
         setForm('');
         setStatus('typing');
-        setTodos(result.data.addTodo);
       });
   }
 
-  function handleDrag(e, order) {
-    e.dataTransfer.setData('order', order);
+  function handleEditSubmit(e) {
+    e.preventDefault();
+    handleClick('edit', edit._id, edit.text);
+    setEdit({ _id: '', text: '' });
   }
 
-  function handleOnDrop(e, order) {
-    const from = parseInt(e.dataTransfer.getData('order'));
-    const to = order;
+  function handleDrag(e, position) {
+    e.dataTransfer.setData('position', position);
+  }
+
+  // TODO: changes do not persist when refreshed
+  function handleOnDrop(e, position) {
+    const from = parseInt(e.dataTransfer.getData('position'));
+    const to = position;
 
     const nextTodos = todos.map(todo => {
-      if (todo.order === from) {
-        todo.order = to;
-      } else if (todo.order === to) {
-        todo.order = from;
+      if (todo.position === from) {
+        todo.position = to;
+      } else if (todo.position === to) {
+        todo.position = from;
       }
       return todo;
     });
@@ -87,43 +116,51 @@ function TodoList({ currentUser }) {
     e.preventDefault();
   }
 
-  function checkTodo(id) {
-    const nextTodos = todos.map(todo => {
-      if (todo._id === id) {
-        todo.isActive = !todo.isActive;
-      }
-      return todo;
-    });
+  function handleClick(action, _id, text = '') {
+    setStatus('submitting');
 
-    setTodos(nextTodos);
-  }
-
-  function hideTodo(id) {
-    const nextTodos = todos.map(todo => {
-      if (todo._id === id) {
-        todo.isHidden = true;
-      }
-      return todo;
-    });
-
-    setTodos(nextTodos);
+    fetch('http://localhost:3000/graphql', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query: updateTodo(),
+        variables: {
+          _id: _id,
+          action: action,
+          text: text
+        }
+      })
+    })
+      .then(res => res.json())
+      .then(result => {
+        setTodos(result.data.updateTodo);
+        setStatus('typing');
+      });
   }
 
   const listTodos = todos
-    .toSorted((a, b) => a.order - b.order)
+    .toSorted((a, b) => b.position - a.position)
     .filter(todo => parseInt(todo.user_id) === currentUser._id)
     .filter(todo => todo.isHidden === false)
     .map(todo => (
       <tr key={todo._id}>
-        <td className='icon' onClick={() => checkTodo(todo._id)}>
+        <td
+          className='icon'
+          disabled={status === 'submitting'}
+          onClick={() => handleClick('check', todo._id)}>
           <span className='material-symbols-outlined'>
             {todo.isActive ? 'check_box_outline_blank' : 'check_box'}{' '}
           </span>
         </td>
         <td
+          disabled={status === 'submitting'}
           draggable
-          onDragStart={e => handleDrag(e, todo.order)}
-          onDrop={e => handleOnDrop(e, todo.order)}
+          hidden={edit._id === todo._id}
+          onDragStart={e => handleDrag(e, todo.position)}
+          onDrop={e => handleOnDrop(e, todo.position)}
           style={
             todo.isActive
               ? {}
@@ -131,13 +168,36 @@ function TodoList({ currentUser }) {
           }>
           {todo.text}
         </td>
-        <td className='icon'>
-          <span className='material-symbols-outlined'>edit</span>
+        <td hidden={edit._id !== todo._id}>
+          <form onSubmit={handleEditSubmit}>
+            <input
+              disabled={status === 'submitting'}
+              onChange={handleEditChange}
+              ref={e => {
+                if (e) editRefs.current.add(e);
+              }}
+              type='text'
+              value={edit.text}
+            />
+          </form>
+        </td>
+        <td
+          className='icon'
+          style={edit._id === todo._id ? { visibility: 'hidden' } : {}}>
+          <span
+            className='material-symbols-outlined'
+            disabled={status === 'submitting'}
+            onClick={() => {
+              setEdit({ _id: todo._id, text: todo.text });
+            }}>
+            edit
+          </span>
         </td>
         <td className='icon'>
           <span
             className='material-symbols-outlined'
-            onClick={() => hideTodo(todo._id)}>
+            disabled={status === 'submitting'}
+            onClick={() => handleClick('hide', todo._id)}>
             delete
           </span>
         </td>

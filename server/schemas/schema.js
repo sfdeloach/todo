@@ -23,7 +23,7 @@ const TodoType = new GraphQLObjectType({
       // TODO: convert to an async call to db
       resolve: (parent, args) => users.find(user => user._id === parent.user_id)
     },
-    order: { type: GraphQLInt },
+    position: { type: GraphQLInt },
     isActive: { type: GraphQLBoolean },
     isHidden: { type: GraphQLBoolean },
     text: { type: GraphQLString }
@@ -118,25 +118,54 @@ const Mutation = new GraphQLObjectType({
       },
       // TODO: convert to an async call to db
       resolve: (parent, args) => {
+        // iterate thru todos, find next position
+        const nextPosition = todos.reduce((previous, nextTodo) => {
+          if (nextTodo.user_id !== parseInt(args.user_id)) {
+            return previous;
+          }
+
+          return previous < nextTodo.position ? nextTodo.position : previous;
+        }, 0);
+
         // create new todo
         const newTodo = {
           _id: crypto.randomUUID(),
           user_id: parseInt(args.user_id),
-          order: 0,
+          position: nextPosition + 1,
           isActive: true,
           isHidden: false,
           text: args.text
         };
 
-        // reorder user's todos, add new one
-        const updatedTodos = todos.map(todo => {
-          if (todo.user_id === parseInt(args.user_id)) {
-            todo.order = todo.order + 1;
-          }
-          return todo;
-        });
+        todos.push(newTodo);
 
-        todos = [...updatedTodos, newTodo];
+        return todos;
+      }
+    },
+    updateTodo: {
+      type: new GraphQLList(TodoType),
+      args: {
+        _id: { type: GraphQLString },
+        action: { type: GraphQLString },
+        text: { type: GraphQLString }
+      },
+      resolve: (parent, args) => {
+        // toggle the intended _id
+        const index = todos.findIndex(todo => todo._id === args._id);
+
+        switch (args.action) {
+          case 'check':
+            todos[index].isActive = !todos[index].isActive;
+            break;
+          case 'edit':
+            todos[index].text = args.text;
+            break;
+          case 'hide':
+            todos[index].isHidden = true;
+            break;
+          default:
+            throw new Error(`action "${args.action}" is not recognized`);
+        }
 
         return todos;
       }
