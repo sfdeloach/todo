@@ -172,6 +172,7 @@ function TodoList({ currentUser }) {
           <form onSubmit={handleEditSubmit}>
             <input
               disabled={status === 'submitting'}
+              name={`edit-todo-${todo._id}`}
               onChange={handleEditChange}
               ref={e => {
                 if (e) editRefs.current.add(e);
@@ -213,7 +214,7 @@ function TodoList({ currentUser }) {
           <input
             autoFocus={true}
             disabled={status === 'submitting'}
-            name='todo'
+            name='new-todo'
             onChange={handleFormChange}
             ref={inputRef}
             type='text'
