@@ -8,13 +8,13 @@ Resources:
 Create and start the docker container
 
 ```
-$ docker run --detach -p 3306:3306 --name some-mariadb --env MARIADB_USER=steven --env MARIADB_PASSWORD=lillian16 --env MARIADB_DATABASE=todo-db --env MARIADB_ROOT_PASSWORD=lillian16  mariadb:latest
+$ docker run --detach -p 3306:3306 --env MARIADB_USER=user --env MARIADB_PASSWORD=password --env MARIADB_DATABASE=todo-db --env MARIADB_ROOT_PASSWORD=password  mariadb:latest
 ```
   
 Connect to the database container from local:
 
 ```
-$ mariadb -h localhost -P 3306 --protocol=tcp -u steven -p todo-db
+$ mariadb --host=localhost --port=3306 --protocol=TCP --user=user --password=password todo-db
 ```
 ## Data Model
 
