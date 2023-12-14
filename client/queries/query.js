@@ -37,8 +37,8 @@ mutation AddTodo ($user_id: String!, $text: String!) {
 }`;
 
 export const updateTodo = () => `
-mutation UpdateTodo ($_id: String!, $action: String!, $text: String!) {
-  updateTodo(_id: $_id, action: $action, text: $text) {
+mutation UpdateTodo ($_id: String!, $action: String!, $text: String, $theOtherID: String) {
+  updateTodo(_id: $_id, action: $action, text: $text, theOtherID: $theOtherID) {
       _id
       user_id
       position

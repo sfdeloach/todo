@@ -91,32 +91,21 @@ function TodoList({ currentUser }) {
     setEdit({ _id: '', text: '' });
   }
 
-  function handleDrag(e, position) {
-    e.dataTransfer.setData('position', position);
+  function handleDrag(e, todo) {
+    e.dataTransfer.setData('todo', JSON.stringify(todo));
   }
 
-  // TODO: changes do not persist when refreshed
-  function handleOnDrop(e, position) {
-    const from = parseInt(e.dataTransfer.getData('position'));
-    const to = position;
-
-    const nextTodos = todos.map(todo => {
-      if (todo.position === from) {
-        todo.position = to;
-      } else if (todo.position === to) {
-        todo.position = from;
-      }
-      return todo;
-    });
-
-    setTodos(nextTodos);
+  function handleOnDrop(e, todo) {
+    const from = JSON.parse(e.dataTransfer.getData('todo'));
+    const emptyString = '';
+    handleClick('reorder', from._id, emptyString, todo._id);
   }
 
   function handleDragOver(e) {
     e.preventDefault();
   }
 
-  function handleClick(action, _id, text = '') {
+  function handleClick(action, _id, text = '', theOtherID = '') {
     setStatus('submitting');
 
     fetch('http://localhost:3000/graphql', {
@@ -127,11 +116,7 @@ function TodoList({ currentUser }) {
       },
       body: JSON.stringify({
         query: updateTodo(),
-        variables: {
-          _id: _id,
-          action: action,
-          text: text
-        }
+        variables: { _id, action, text, theOtherID }
       })
     })
       .then(res => res.json())
@@ -159,8 +144,8 @@ function TodoList({ currentUser }) {
           disabled={status === 'submitting'}
           draggable
           hidden={edit._id === todo._id}
-          onDragStart={e => handleDrag(e, todo.position)}
-          onDrop={e => handleOnDrop(e, todo.position)}
+          onDragStart={e => handleDrag(e, todo)}
+          onDrop={e => handleOnDrop(e, todo)}
           style={
             todo.isActive
               ? {}

@@ -7,7 +7,6 @@ const {
   GraphQLID,
   GraphQLInt,
   GraphQLList,
-  GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString
@@ -146,12 +145,17 @@ const Mutation = new GraphQLObjectType({
       type: new GraphQLList(TodoType),
       args: {
         _id: { type: GraphQLString },
+        theOtherID: { type: GraphQLString },
         action: { type: GraphQLString },
         text: { type: GraphQLString }
       },
       resolve: (parent, args) => {
-        // toggle the intended _id
-        const index = todos.findIndex(todo => todo._id === args._id);
+        let index = todos.findIndex(todo => todo._id === args._id);
+        let otherIndex;
+
+        if (args.action === 'reorder') {
+          otherIndex = todos.findIndex(todo => todo._id === args.theOtherID);
+        }
 
         switch (args.action) {
           case 'check':
@@ -163,6 +167,11 @@ const Mutation = new GraphQLObjectType({
           case 'hide':
             todos[index].isHidden = true;
             break;
+          case 'reorder':
+            const temp = todos[index].position;
+            todos[index].position = todos[otherIndex].position;
+            todos[otherIndex].position = temp;
+            break;
           default:
             throw new Error(`action "${args.action}" is not recognized`);
         }
@@ -172,54 +181,6 @@ const Mutation = new GraphQLObjectType({
     }
   }
 });
-
-// const Mutation = new GraphQLObjectType({
-//   name: 'Mutation',
-//   fields: {
-//     addAuthor: {
-//       type: AuthorType,
-//       args: {
-//         name: { type: new GraphQLNonNull(GraphQLString) },
-//         age: { type: GraphQLInt }
-//       },
-//       resolve: async (parent, args) => {
-//         let collection = db.collection('authors');
-//         let newDocument = { name: args.name, age: args.age };
-//         let result = await collection.insertOne(newDocument);
-
-//         if (!result.acknowledged) {
-//           console.error(result);
-//           return result;
-//         }
-
-//         console.log(`[${new Date().toLocaleTimeString()}] added author`);
-//         return await collection.findOne({ _id: result.insertedId });
-//       }
-//     },
-//     addBook: {
-//       type: BookType,
-//       args: {
-//         name: { type: new GraphQLNonNull(GraphQLString) },
-//         genre: { type: new GraphQLNonNull(GraphQLString) },
-//         author_id: { type: new GraphQLNonNull(GraphQLID) }
-//       },
-//       resolve: async (parent, args) => {
-//         let collection = db.collection('books');
-//         let newDocument = { name: args.name, genre: args.genre, author_id: args.author_id };
-//         let result = await collection.insertOne(newDocument);
-
-//         if (!result.acknowledged) {
-//           console.error(result);
-//           return result;
-//         }
-
-//         console.log(`[${new Date().toLocaleTimeString()}] added book`);
-//         return await collection.findOne({ _id: result.insertedId });
-//       }
-//     }
-//     // TODO: update, and delete, (insertMany and deleteAll for testing)
-//   }
-// });
 
 module.exports = {
   schema: new GraphQLSchema({
