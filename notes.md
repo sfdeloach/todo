@@ -24,6 +24,7 @@ $ mariadb --host=localhost --port=3306 --protocol=TCP --user=user --password=pas
 | :-----: | ----------- | :-------: |
 | primary | \_id        |    INT    |
 | foreign | user_id     |    INT    |
+|         | position    |    INT    |
 |         | isActive    |   BOOL    |
 |         | isHidden    |   BOOL    |
 |         | text        | TEXT(256) |

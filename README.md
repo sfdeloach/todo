@@ -6,7 +6,7 @@
 
 ## Dev Stack
 
-- Apache HTTP Server, PHPMyAdmin, Postman, Vite
+- Apache HTTP Server, PHPMyAdmin, Docker, Postman, Vite
 
 ## Project Objectives
 

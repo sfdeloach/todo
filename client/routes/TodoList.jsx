@@ -6,17 +6,17 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { getAllTodos, addTodo, updateTodo } from '../queries/query';
+import { addTodo, getAllTodos, updateTodo } from '../queries/query';
 import './TodoList.css';
 
 function TodoList({ currentUser }) {
-  const inputRef = useRef();
   const editRefs = useRef(new Set());
+  const inputRef = useRef();
 
-  const [todos, setTodos] = useState([]);
-  const [status, setStatus] = useState('typing');
-  const [form, setForm] = useState('');
   const [edit, setEdit] = useState({ _id: '', text: '' });
+  const [form, setForm] = useState('');
+  const [status, setStatus] = useState('typing');
+  const [todos, setTodos] = useState([]);
 
   useEffect(() => {
     fetch('http://localhost:3000/graphql', {
