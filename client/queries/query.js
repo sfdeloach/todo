@@ -1,16 +1,36 @@
 // current not used
-export const getUserTodos = user_id => `
-query User {
-  user(_id: ${user_id}) {
-    todos {
+// export const getUserTodos = user_id => `
+// query User {
+//   user(_id: ${user_id}) {
+//     todos {
+//       _id
+//       position
+//       isActive
+//       isHidden
+//       text
+//     }
+//   }
+// }`;
+
+export const getAllUsers = () => `
+query Users {
+  users {
       _id
-      position
+      role_id
       isActive
       isHidden
-      text
-    }
+      name_first
+      name_last
+      username
+      role {
+          _id
+          authLevel
+          name
+          description
+      }
   }
-}`;
+}
+`;
 
 export const getAllTodos = () => `
 query Todos {

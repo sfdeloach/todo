@@ -1,4 +1,4 @@
-function TopNav({ currentUser, logout }) {
+function TopNav({ currentUser, handlePageNavigation }) {
   return (
     <div
       style={{
@@ -10,21 +10,49 @@ function TopNav({ currentUser, logout }) {
         marginBottom: '2rem',
         backgroundColor: '#eee',
         height: '3rem'
-      }}
-    >
-      <div style={{ fontSize: '2rem' }}>
+      }}>
+      <div
+        style={{ fontSize: '2rem' }}
+        onClick={() => handlePageNavigation('todo-list')}
+        onMouseEnter={e => {
+          if (currentUser.loggedIn) {
+            e.target.style.color = '#888';
+            e.target.style.cursor = 'pointer';
+          }
+        }}
+        onMouseLeave={e => {
+          if (currentUser.loggedIn) {
+            e.target.style.color = '#000';
+            e.target.style.cursor = 'default';
+          }
+        }}>
         <span className='material-symbols-outlined'>checklist</span> my todo
       </div>
       <div
-        style={{ display: currentUser.loggedIn ? 'block' : 'none' }}
-        onClick={logout}
-        onMouseEnter={e => {
-          e.target.style.color = '#888';
-          e.target.style.cursor = 'pointer';
-        }}
-        onMouseLeave={e => (e.target.style.color = '#000')}
-      >
-        Logout
+        style={{
+          display: 'flex',
+          gap: '1rem'
+        }}>
+        <div
+          style={currentUser.role_id === 0 ? {} : { visibility: 'hidden' }}
+          onClick={() => handlePageNavigation('user-list')}
+          onMouseEnter={e => {
+            e.target.style.color = '#888';
+            e.target.style.cursor = 'pointer';
+          }}
+          onMouseLeave={e => (e.target.style.color = '#000')}>
+          Users
+        </div>
+        <div
+          style={{ display: currentUser.loggedIn ? 'block' : 'none' }}
+          onClick={() => handlePageNavigation('logout')}
+          onMouseEnter={e => {
+            e.target.style.color = '#888';
+            e.target.style.cursor = 'pointer';
+          }}
+          onMouseLeave={e => (e.target.style.color = '#000')}>
+          Logout
+        </div>
       </div>
     </div>
   );

@@ -137,7 +137,7 @@ function TodoList({ currentUser }) {
           disabled={status === 'submitting'}
           onClick={() => handleClick('check', todo._id)}>
           <span className='material-symbols-outlined'>
-            {todo.isActive ? 'check_box_outline_blank' : 'check_box'}{' '}
+            {todo.isActive ? 'check_box_outline_blank' : 'check_box'}
           </span>
         </td>
         <td
@@ -191,7 +191,7 @@ function TodoList({ currentUser }) {
     ));
 
   return (
-    <div className='todoList'>
+    <div className='todo-list'>
       <h1>{currentUser.name_first}'s todo list</h1>
       <form onSubmit={handleSubmit}>
         <label>

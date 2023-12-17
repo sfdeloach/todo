@@ -5,6 +5,7 @@ import Loading from '../routes/Loading';
 import Login from '../routes/Login';
 import TodoList from '../routes/TodoList';
 import TopNav from './TopNav';
+import UserList from '../routes/UserList';
 
 function App() {
   const [user, setUser] = useState({ loggedIn: false });
@@ -41,6 +42,24 @@ function App() {
       });
   }
 
+  function handlePageNavigation(page) {
+    switch (page) {
+      case 'logout':
+        logout();
+        break;
+      case 'user-list':
+        setPage('user-list');
+        break;
+      case 'todo-list':
+        if (user.loggedIn) {
+          setPage('todo-list');
+        }
+        break;
+      default:
+        return <Error />;
+    }
+  }
+
   function renderPage(page) {
     switch (page) {
       case 'loading':
@@ -49,6 +68,8 @@ function App() {
         return <Login initUser={initUser} />;
       case 'todo-list':
         return <TodoList currentUser={user} />;
+      case 'user-list':
+        return <UserList />;
       default:
         return <Error />;
     }
@@ -56,7 +77,7 @@ function App() {
 
   return (
     <>
-      <TopNav currentUser={user} logout={logout} />
+      <TopNav currentUser={user} handlePageNavigation={handlePageNavigation} />
       {renderPage(page)}
     </>
   );

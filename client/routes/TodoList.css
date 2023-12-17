@@ -1,15 +1,15 @@
-.todoList {
+.todo-list {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.todoList table {
+.todo-list table {
   border-spacing: 0px;
   margin-top: 1.5rem;
 }
 
-.todoList td.icon {
+.todo-list td.icon {
   padding: 1rem 1rem;
   cursor: pointer;
 }
