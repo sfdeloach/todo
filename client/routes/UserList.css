@@ -11,3 +11,25 @@
 .user-list td.icon {
   cursor: pointer;
 }
+
+.user-table .text-strike {
+  color: #aaa;
+  text-decoration: line-through;
+}
+
+form {
+  max-width: 50vw;
+}
+
+button {
+  margin: 1rem 1rem 1rem 0rem;
+}
+
+fieldset {
+  display: flex;
+  justify-content: space-around;
+}
+
+fieldset label {
+  display: flex;
+}

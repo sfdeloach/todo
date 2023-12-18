@@ -1,17 +1,3 @@
-// current not used
-// export const getUserTodos = user_id => `
-// query User {
-//   user(_id: ${user_id}) {
-//     todos {
-//       _id
-//       position
-//       isActive
-//       isHidden
-//       text
-//     }
-//   }
-// }`;
-
 export const getAllUsers = () => `
 query Users {
   users {

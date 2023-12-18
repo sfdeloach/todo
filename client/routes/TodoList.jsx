@@ -127,9 +127,9 @@ function TodoList({ currentUser }) {
   }
 
   const listTodos = todos
-    .toSorted((a, b) => b.position - a.position)
-    .filter(todo => parseInt(todo.user_id) === currentUser._id)
     .filter(todo => todo.isHidden === false)
+    .filter(todo => parseInt(todo.user_id) === currentUser._id)
+    .toSorted((a, b) => b.position - a.position)
     .map(todo => (
       <tr key={todo._id}>
         <td

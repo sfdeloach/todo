@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# open editor
+code .
+
 # start vite development server in a new window
 gnome-terminal -- zsh -c "cd ./client; npm run dev"
 
