@@ -1,5 +1,8 @@
 {
   "cSpell.words": ["QLID", "Readall", "Rebecca", "resave", "todos"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.rulers": [80]
+  "editor.rulers": [80],
+  "[sql]": {
+    "editor.defaultFormatter": "adpyke.vscode-sql-formatter"
+  }
 }
