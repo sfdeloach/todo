@@ -1,43 +1,47 @@
+-- MariaDB commands to setup database for the todo app
+SELECT
+    'dropping database' as '';
+
+DROP DATABASE IF EXISTS todo_db;
+
+CREATE DATABASE todo_db;
+
+USE todo_db;
+
 SELECT
     'dropping tables' as '';
-
-DROP TABLE todos;
-
-DROP TABLE users;
-
-DROP TABLE roles;
 
 SELECT
     'creating tables' as '';
 
 CREATE TABLE roles (
-    _id int NOT NULL AUTO_INCREMENT,
-    authLevel int,
-    name text(16),
-    description text(64),
+    _id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    authLevel INT,
+    name VARCHAR(16),
+    description VARCHAR(64),
     PRIMARY KEY (_id)
 );
 
 CREATE TABLE users (
-    _id int NOT NULL AUTO_INCREMENT,
-    role_id int,
-    isActive boolean,
-    isHidden boolean,
-    name_first text(32),
-    name_last text(32),
-    username text(64),
-    hash text(128),
+    _id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    role_id INT UNSIGNED,
+    isActive BOOLEAN,
+    isHidden BOOLEAN,
+    name_first VARCHAR(32),
+    name_last VARCHAR(32),
+    username VARCHAR(64),
+    hash VARCHAR(128),
     PRIMARY KEY (_id),
     FOREIGN KEY (role_id) REFERENCES roles(_id)
 );
 
 CREATE TABLE todos (
-    _id int NOT NULL AUTO_INCREMENT,
-    user_id int,
-    position int,
-    isActive boolean,
-    isHidden boolean,
-    text text(256),
+    _id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id INT UNSIGNED,
+    position INT,
+    isActive BOOLEAN,
+    isHidden BOOLEAN,
+    `text` VARCHAR(256),
     PRIMARY KEY (_id),
     FOREIGN KEY (user_id) REFERENCES users(_id)
 );

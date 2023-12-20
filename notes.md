@@ -9,13 +9,13 @@ Resources:
 Create and start the docker container
 
 ```
-$ docker run --detach -p 3306:3306 --env MARIADB_USER=user --env MARIADB_PASSWORD=password --env MARIADB_DATABASE=todo-db --env MARIADB_ROOT_PASSWORD=password mariadb:latest
+$ docker run --detach -p 3306:3306 --env MARIADB_USER=user --env MARIADB_PASSWORD=password --env MARIADB_DATABASE=todo_db --env MARIADB_ROOT_PASSWORD=password mariadb:latest
 ```
 
 Connect to the database container from local:
 
 ```
-$ mariadb --host=localhost --port=3306 --protocol=TCP --user=user --password=password todo-db
+$ mariadb --host=localhost --port=3306 --protocol=TCP --user=user --password=password todo_db
 ```
 
 Run a SQL script from command line:
@@ -30,9 +30,9 @@ MariaDB [todo-db]> source {path_to_file.sql}
 
 |   key   | column name |   type    |
 | :-----: | ----------- | :-------: |
-| primary | \_id        |    INT    |
-| foreign | user_id     |    INT    |
-|         | position    |    INT    |
+| primary | \_id        |   UINT    |
+| foreign | user_id     |   UINT    |
+|         | position    |   UINT    |
 |         | isActive    |   BOOL    |
 |         | isHidden    |   BOOL    |
 |         | text        | TEXT(256) |
@@ -41,8 +41,8 @@ MariaDB [todo-db]> source {path_to_file.sql}
 
 |   key   | column name |    type   |
 | :-----: | ----------- | :-------: |
-| primary | \_id        |    INT    |
-| foreign | role_id     |    INT    |
+| primary | \_id        |    UINT   |
+| foreign | role_id     |    UINT   |
 |         | isActive    |    BOOL   |
 |         | isHidden    |    BOOL   |
 |         | name_first  |  TEXT(32) |
@@ -54,8 +54,8 @@ MariaDB [todo-db]> source {path_to_file.sql}
 
 |   key   | column name |   type   |
 | :-----: | ----------- | :------: |
-| primary | \_id        |   INT    |
-|         | authLevel   |   INT    |
+| primary | \_id        |   UINT   |
+|         | authLevel   |   UINT   |
 |         | name        | TEXT(16) |
 |         | description | TEXT(64) |
 
