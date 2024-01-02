@@ -26,38 +26,38 @@ MariaDB [todo-db]> source {path_to_file.sql}
 
 ## Data Model
 
-### todos table
+### roles table
 
-|   key   | column name |   type    |
-| :-----: | ----------- | :-------: |
-| primary | \_id        |   UINT    |
-| foreign | user_id     |   UINT    |
-|         | position    |   UINT    |
-|         | isActive    |   BOOL    |
-|         | isHidden    |   BOOL    |
-|         | text        | TEXT(256) |
+|   key   | column name |    type     |
+| :-----: | ----------- | :---------: |
+| primary | \_id        |    UINT     |
+|         | authLevel   |    UINT     |
+|         | name        | VARCHAR(16) |
+|         | description | VARCHAR(64) |
 
 ### users table
 
-|   key   | column name |    type   |
-| :-----: | ----------- | :-------: |
-| primary | \_id        |    UINT   |
-| foreign | role_id     |    UINT   |
-|         | isActive    |    BOOL   |
-|         | isHidden    |    BOOL   |
-|         | name_first  |  TEXT(32) |
-|         | name_last   |  TEXT(32) |
-|         | username    |  TEXT(64) |
-|         | hash        | TEXT(128) |
+|   key   | column name |     type     |
+| :-----: | ----------- | :----------: |
+| primary | \_id        |     UINT     |
+| foreign | role_id     |     UINT     |
+|         | isActive    |     BOOL     |
+|         | isHidden    |     BOOL     |
+|         | name_first  |  VARCHAR(32) |
+|         | name_last   |  VARCHAR(32) |
+|         | username    |  VARCHAR(64) |
+|         | hash        | VARCHAR(128) |
 
-### roles table
+### todos table
 
-|   key   | column name |   type   |
-| :-----: | ----------- | :------: |
-| primary | \_id        |   UINT   |
-|         | authLevel   |   UINT   |
-|         | name        | TEXT(16) |
-|         | description | TEXT(64) |
+|   key   | column name |     type     |
+| :-----: | ----------- | :----------: |
+| primary | \_id        |     UINT     |
+| foreign | user_id     |     UINT     |
+|         | position    |     UINT     |
+|         | isActive    |     BOOL     |
+|         | isHidden    |     BOOL     |
+|         | text        | VARCHAR(256) |
 
 ## Authentication Workflow
 
