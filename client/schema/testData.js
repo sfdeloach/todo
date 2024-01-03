@@ -1,4 +1,4 @@
-module.exports.roles = [
+export const roles = [
   {
     _id: 1,
     authLevel: 30,
@@ -19,7 +19,7 @@ module.exports.roles = [
   }
 ];
 
-module.exports.users = [
+export const users = [
   {
     _id: 1,
     role_id: 0,
@@ -52,7 +52,7 @@ module.exports.users = [
   }
 ];
 
-module.exports.todos = [
+export const todos = [
   {
     _id: 1,
     user_id: 0,
