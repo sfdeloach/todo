@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 
+const loggedIn = true;
+
 export default function Navbar() {
   return (
-    <div className='navbar bg-primary'>
+    <div className='navbar'>
       <div className='navbar-start'>
         <div className='dropdown'>
           <div tabIndex={0} role='button' className='btn btn-ghost lg:hidden'>
@@ -11,7 +13,8 @@ export default function Navbar() {
               className='h-5 w-5'
               fill='none'
               viewBox='0 0 24 24'
-              stroke='currentColor'>
+              stroke='currentColor'
+            >
               <path
                 strokeLinecap='round'
                 strokeLinejoin='round'
@@ -22,7 +25,8 @@ export default function Navbar() {
           </div>
           <ul
             tabIndex={0}
-            className='menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52'>
+            className='menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52'
+          >
             <li>
               <Link to={`/todos`}>todos</Link>
             </li>
@@ -46,7 +50,13 @@ export default function Navbar() {
         </ul>
       </div>
       <div className='navbar-end'>
-        <Link className='px-4'>Logout</Link>
+        <Link className='btn btn-ghost'>
+          {loggedIn ? (
+            <span className='material-symbols-outlined'>logout</span>
+          ) : (
+            <span className='material-symbols-outlined'>login</span>
+          )}
+        </Link>
       </div>
     </div>
   );
